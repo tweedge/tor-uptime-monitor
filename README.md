@@ -1,8 +1,7 @@
 # tor-uptime-monitor
 
-[![Pulls](https://img.shields.io/docker/pulls/tweedge/tor-uptime-monitor)](https://hub.docker.com/repository/docker/tweedge/tor-uptime-monitor)
+[![DockerHub Link](https://img.shields.io/docker/pulls/tweedge/tor-uptime-monitor)](https://hub.docker.com/repository/docker/tweedge/tor-uptime-monitor)
 [![License](https://img.shields.io/github/license/tweedge/tor-uptime-monitor)](https://github.com/tweedge/tor-uptime-monitor)
-[![Code Style](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 [![Written By](https://img.shields.io/badge/written%20by-some%20nerd-red.svg)](https://chris.partridge.tech)
 [![Author Also Writes On](https://img.shields.io/mastodon/follow/108210086817505115?domain=https%3A%2F%2Fcybersecurity.theater)](https://cybersecurity.theater/@tweedge)
 
