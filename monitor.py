@@ -69,7 +69,7 @@ def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
 def report_success(uptime_report_url):
     try:
         reported = requests.get(uptime_report_url)
-        reported_status = reported.status
+        reported_status = reported.status_code
         print(f"OK: Pinged uptime monitor (response code: {reported_status})")
     except Exception as e:
         print(f"FAIL: Uptime monitor ping failed due to {str(e)}")
