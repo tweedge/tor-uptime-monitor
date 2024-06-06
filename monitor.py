@@ -1,5 +1,5 @@
 from os import environ, getenv
-from time import sleep
+from time import sleep, time
 
 import requests
 import stem.control
@@ -44,6 +44,7 @@ user_agent = f"{user_agent} (via https://github.com/tweedge/tor-uptime-monitor)"
 
 
 def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
+    time_start = time()
     session = requests.session()
 
     # Tor uses the 9050 port as the default socks port and we must use it to resolve too
@@ -67,7 +68,8 @@ def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
             )
             return False
 
-    print(f"OK: Fetched and validated the target URL")
+    time_taken = round(time() - time_start, 3)
+    print(f"OK: Fetched and validated the target URL in {time_taken}s")
     return True
 
 
