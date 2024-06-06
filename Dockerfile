@@ -8,4 +8,4 @@ RUN apk add --no-cache python3 py3-requests py3-stem py3-pysocks
 
 USER tor
 
-CMD ["python3", "/opt/monitor.py"]
+CMD ["python3", "-u", "/opt/monitor.py"]
