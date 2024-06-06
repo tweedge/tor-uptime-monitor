@@ -31,6 +31,9 @@ monitor_tor_contents = getenv_or_default("MONITOR_TOR_CONTENTS", None)
 monitor_tor_timeout = getenv_or_default("MONITOR_TOR_TIMEOUT", 30)
 monitor_sleep = getenv_or_default("MONITOR_SLEEP", 30)
 restart_after_x_failures = getenv_or_default("RESTART_AFTER_X_FAILURES", 10)
+uptime_report_response_code_under = getenv_or_default(
+    "UPTIME_REPORT_RESPONSE_CODE_UNDER", 300
+)
 
 # osminogin/docker-tor-simple variables (don't change these)
 SOCKS_PORT = 9050
@@ -59,20 +62,31 @@ def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
 
     if monitor_tor_contents:
         if not monitor_tor_contents in result.text:
-            print(f"FAIL: Fetch completed but validation failed on {monitor_tor_url}")
+            print(
+                f"FAIL: Fetch completed but couldn't find {monitor_tor_contents} in {monitor_tor_url}"
+            )
             return False
 
-    print(f"OK: Fetched and validated {monitor_tor_url}")
+    print(f"OK: Fetched and validated the target URL")
     return True
 
 
-def report_success(uptime_report_url):
+def report_success(uptime_report_url, uptime_report_response_code_under):
     try:
         reported = requests.get(uptime_report_url)
         reported_status = reported.status_code
-        print(f"OK: Pinged uptime monitor (response code: {reported_status})")
+        if reported_status < uptime_report_response_code_under:
+            print(
+                f"OK: Reported success to uptime monitor (response code: {reported_status})"
+            )
+        else:
+            print(
+                f"WARN: Unexpected response code ({reported_status}) from {uptime_report_url}"
+            )
     except Exception as e:
-        print(f"FAIL: Uptime monitor ping failed due to {str(e)}")
+        print(
+            f"WARN: Exception {str(e)} occurred when accessing uptime monitor {uptime_report_url}"
+        )
 
 
 def print_bootstrap_lines(line):
@@ -97,7 +111,7 @@ while repeated_exceptions < restart_after_x_failures:
     response = tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout)
 
     if response:
-        report_success(uptime_report_url)
+        report_success(uptime_report_url, uptime_report_response_code_under)
         repeated_exceptions = 0
     else:
         repeated_exceptions += 1
