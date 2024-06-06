@@ -27,11 +27,14 @@ Two environment variables **must** be set (and the container will stop if these 
 * `MONITOR_TOR_URL` is the URL that you want to access on Tor, ex. your Onion site
 * `UPTIME_REPORT_URL` is the URL what you want to access whenn (and only when) your Tor site was successfully accessed
 
-The following environment variables are also available to configure your monitor's behavior:
+The following environment variables are available to configure your monitor's behavior:
 
 * `MONITOR_TOR_CONTENTS` **[HIGHLY RECOMMENDED]** is a string that must be present in the body of the URL you're checking on Tor, to ensure your site is truly up and not returning an error (default: don't check for any text)
 * `MONITOR_TOR_TIMEOUT` configures the request timeout (in seconds) while fetching the URL you're checking via Tor (default: 30)
 * `MONITOR_SLEEP` configures how long (in seconds) to sleep between attempts to access the URL on Tor (default: 30)
+
+And if you're a real nerd, you can also tweak these probably-OK-to-leave-at-default variables:
+
 * `PRINT_TOR_MESSAGES` configures what messages you want to see from Tor. Currently this has one option: `bootstrap_only` (which is the default) will only print bootstrapping messages so you can see if Tor comes up. Setting this to anything else will print all messages from Tor.
 * `RESTART_AFTER_X_FAILURES` configures how many consecutive failures to tolerate before exiting this script, which if you've set the Docker restart policy to "always," prompts creation of a new container (default: 5)
 * `UPTIME_REPORT_RESPONSE_CODE_UNDER` configures when to show a warning in the logs if a the uptime reporting URL gave an unexpectedly high response code (default: 300 - i.e. any sub-300 response code is OK and won't show a warning)
