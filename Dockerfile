@@ -4,8 +4,8 @@ USER root
 
 COPY ./monitor.py /opt/monitor.py
 
-RUN apk add --no-cache python3 py3-pip && \
-    pip3 install 'requests[socks]' logtail-python stem
+RUN apk add --no-cache python3 py3-pip
+RUN pip3 install 'requests[socks]' logtail-python stem
 
 USER tor
 
