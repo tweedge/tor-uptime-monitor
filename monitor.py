@@ -29,6 +29,7 @@ if not (monitor_tor_url and uptime_report_url):
 # optional variables
 monitor_tor_contents = getenv_or_default("MONITOR_TOR_CONTENTS", None)
 monitor_tor_timeout = getenv_or_default("MONITOR_TOR_TIMEOUT", 30)
+print_tor_messages = getenv_or_default("PRINT_TOR_MESSAGES", "bootstrap_only")
 monitor_sleep = getenv_or_default("MONITOR_SLEEP", 30)
 restart_after_x_failures = getenv_or_default("RESTART_AFTER_X_FAILURES", 10)
 uptime_report_response_code_under = getenv_or_default(
@@ -91,8 +92,11 @@ def report_success(uptime_report_url, uptime_report_response_code_under):
         )
 
 
-def print_bootstrap_lines(line):
-    if "Bootstrapped " in line:
+def selectively_print_tor_messages(line):
+    if print_tor_messages == "bootstrap_only":
+        if "Bootstrapped " in line:
+            print(f"TOR: {line}")
+    else:
         print(f"TOR: {line}")
 
 
@@ -103,7 +107,7 @@ tor_process = stem.process.launch_tor_with_config(
         "SocksPort": str(SOCKS_PORT),
         "ControlPort": str(CONTROL_PORT),
     },
-    init_msg_handler=print_bootstrap_lines,
+    init_msg_handler=selectively_print_tor_messages,
 )
 
 sleep(monitor_sleep)  # give it a bit to start up
