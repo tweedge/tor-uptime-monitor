@@ -120,6 +120,9 @@ while repeated_exceptions < restart_after_x_failures:
         report_success(uptime_report_url, uptime_report_response_code_under)
         repeated_exceptions = 0
     else:
+        print(
+            f"SYSTEM: Sending NEWNYM to Tor control port, trying to get a new better-functioning circuit"
+        )
         repeated_exceptions += 1
 
         with Controller.from_port(port=CONTROL_PORT) as controller:
