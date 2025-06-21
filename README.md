@@ -5,7 +5,7 @@
 [![Written By](https://img.shields.io/badge/written%20by-some%20nerd-red.svg)](https://chris.partridge.tech)
 [![Author Also Writes On](https://img.shields.io/mastodon/follow/108210086817505115?domain=https%3A%2F%2Fcybersecurity.theater)](https://cybersecurity.theater/@tweedge)
 
-A small (30MB!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/) and [httpx](https://github.com/encode/httpx/), configured via environment variables, which checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. This was intended to be a one-stop-shop to increase assurance that my Tor site is up, connecting Tor uptime to monitors that have the ability to remind me via emails/texts/etc.
+A small (30MB!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/) and [httpx](https://github.com/encode/httpx/)+socksio, configured via environment variables, which checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. This was intended to be a one-stop-shop to increase assurance that my Tor site is up, connecting Tor uptime to monitors that have the ability to remind me via emails/texts/etc.
 
 *Tor is bundled in this Docker image and controlled via [stem](https://stem.torproject.org/)!* It's completely hands-free and works natively in plain old Docker. Whenever the URL can't be accessed over Tor, instead of failing immediately it'll also request a new identity via sending `NEWNYM` to the Tor control port, which can help move the monitor to a better-functioning circuit.
 
