@@ -1,7 +1,7 @@
 from os import environ, getenv
 from time import sleep, time
 
-import requests
+import httpx
 import stem.control
 import stem.process
 from stem import Signal
@@ -40,21 +40,14 @@ uptime_report_response_code_under = getenv_or_default(
 SOCKS_PORT = 9050
 CONTROL_PORT = 9051
 
-user_agent = requests.utils.default_headers()["User-Agent"]
-user_agent = f"{user_agent} (via https://github.com/tweedge/tor-uptime-monitor)"
-
 
 def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
     time_start = time()
-    session = requests.session()
 
-    # Tor uses the 9050 port as the default socks port and we must use it to resolve too
-    session.proxies = {
-        "http": f"socks5h://127.0.0.1:{SOCKS_PORT}",
-        "https": f"socks5h://127.0.0.1:{SOCKS_PORT}",
-    }
-
-    session.headers.update({"User-Agent": user_agent})
+    # Clearly identify ourselves
+    headers = {"User-Agent": "httpx from tweedge/tor-uptime-monitor"}
+    # Tor uses port 9050 as the default SOCKS port, and we must use it for DNS resolution, so we'll need to specify SOCKS5H
+    session = httpx.Client(proxy=f"socks5h://127.0.0.1:{SOCKS_PORT}", headers=headers)
 
     try:
         result = session.get(monitor_tor_url, timeout=monitor_tor_timeout)
@@ -76,7 +69,7 @@ def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
 
 def report_success(uptime_report_url, uptime_report_response_code_under):
     try:
-        reported = requests.get(uptime_report_url)
+        reported = httpx.get(uptime_report_url)
         reported_status = reported.status_code
         if reported_status < uptime_report_response_code_under:
             print(
