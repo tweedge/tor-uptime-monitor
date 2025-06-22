@@ -1,5 +1,6 @@
 # tor-uptime-monitor
 
+![Build Status](https://github.com/tweedge/tor-uptime-monitor/actions/workflows/publish.yml/badge.svg)
 [![DockerHub Link](https://img.shields.io/docker/pulls/tweedge/tor-uptime-monitor)](https://hub.docker.com/repository/docker/tweedge/tor-uptime-monitor)
 [![License](https://img.shields.io/github/license/tweedge/tor-uptime-monitor)](https://github.com/tweedge/tor-uptime-monitor)
 [![Written By](https://img.shields.io/badge/written%20by-some%20nerd-red.svg)](https://chris.partridge.tech)

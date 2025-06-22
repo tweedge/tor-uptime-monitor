@@ -138,18 +138,18 @@ while repeated_exceptions < restart_after_x_failures:
             controller.authenticate()
             controller.signal(Signal.NEWNYM)
 
-    sleep(monitor_sleep)
-
     # if we're testing, run a couple times before exiting
     if test_ci > 0:  # 0 if not testing, 1 if testing
-        test_ci += 1  # add 1 for every time 1 test completes
-        if test_ci > 4:  # stop after 3 tests
+        test_ci += 1
+        if test_ci > 4:  # stop after several tests
             if repeated_exceptions == 0:  # no issues?
                 print("SHORT TEST: Completed with no failures!")
                 exit(0)
             else:  # possibly an issue!
                 print("SHORT TEST: FAILED! Check preceding logs.")
                 exit(1)
+
+    sleep(monitor_sleep)
 
 print("SYSTEM: Restarting because we've failed too many times in a row")
 exit(1)
