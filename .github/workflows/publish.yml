@@ -29,12 +29,14 @@ jobs:
           load: true
           tags: tweedge/tor-uptime-monitor:test
 
-      - name: Test
+      - name: Checkout short test script
         uses: actions/checkout@v4
+
+      - name: Run short test
         run: |
           bash ./short_test_with_retry.sh
 
-      - name: Build and push if test completed
+      - name: Build and push if short test completed
         uses: docker/build-push-action@v6
         with:
           push: true

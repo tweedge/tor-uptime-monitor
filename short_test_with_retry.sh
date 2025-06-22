@@ -8,3 +8,4 @@ do
    echo "Trying again. Try #$counter"
    ((counter++))
 done
+exit 0
