@@ -22,14 +22,24 @@ def getenv_or_default(environment_variable, value_if_missing):
         return value_if_missing
 
 
-# check required variables
-monitor_tor_url = getenv_or_default("MONITOR_TOR_URL", False)
-uptime_report_url = getenv_or_default("UPTIME_REPORT_URL", False)
+if getenv_or_default("TEST_CI", False):
+    # we are doing a short test in CI!
+    test_ci = 1
 
-# we're missing something :(
-if not (monitor_tor_url and uptime_report_url):
-    print(f"SYSTEM: Missing required environment variables - see README.md")
-    exit(1)
+    # we'll test my own websites
+    monitor_tor_url = (
+        "http://tweedge32j4ib2hrj57l676twj2rwedkkkbr57xcz5z73vpkolws6vid.onion/"
+    )
+    uptime_report_url = "https://chris.partridge.tech/"
+else:
+    # check required variables
+    monitor_tor_url = getenv_or_default("MONITOR_TOR_URL", False)
+    uptime_report_url = getenv_or_default("UPTIME_REPORT_URL", False)
+
+    # we're missing something :(
+    if not (monitor_tor_url and uptime_report_url):
+        print(f"SYSTEM: Missing required environment variables - see README.md")
+        exit(1)
 
 # optional variables
 monitor_tor_contents = getenv_or_default("MONITOR_TOR_CONTENTS", None)
@@ -41,16 +51,6 @@ uptime_report_response_code_under = getenv_or_default(
     "UPTIME_REPORT_RESPONSE_CODE_UNDER", 300
 )
 
-if getenv_or_default("TEST_CI", False):
-    # we are doing a short test in CI!
-    test_ci = 1
-
-    # we'll test my own websites
-    monitor_tor_url = (
-        "http://tweedge32j4ib2hrj57l676twj2rwedkkkbr57xcz5z73vpkolws6vid.onion/2021/breaking-into-product-security/"
-    )
-    uptime_report_url = "https://chris.partridge.tech/"
-    monitor_tor_contents = "Rochester Institute of Technology"
 
 # osminogin/docker-tor-simple variables (don't change these)
 SOCKS_PORT = 9050
