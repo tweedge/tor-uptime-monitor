@@ -47,9 +47,10 @@ if getenv_or_default("TEST_CI", False):
 
     # we'll test my own websites
     monitor_tor_url = (
-        "http://tweedge32j4ib2hrj57l676twj2rwedkkkbr57xcz5z73vpkolws6vid.onion/"
+        "http://tweedge32j4ib2hrj57l676twj2rwedkkkbr57xcz5z73vpkolws6vid.onion/2021/breaking-into-product-security/"
     )
     uptime_report_url = "https://chris.partridge.tech/"
+    monitor_tor_contents = "Rochester Institute of Technology"
 
 # osminogin/docker-tor-simple variables (don't change these)
 SOCKS_PORT = 9050

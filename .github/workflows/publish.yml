@@ -29,7 +29,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run --rm ${{ env.TEST_TAG }}
+          docker run --rm tweedge/tor-uptime-monitor:test -e TEST_CI=ON
 
       - name: Build and push if test completed
         uses: docker/build-push-action@v6
