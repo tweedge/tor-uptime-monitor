@@ -6,7 +6,7 @@
 [![Written By](https://img.shields.io/badge/written%20by-some%20nerd-red.svg)](https://chris.partridge.tech)
 [![Author Also Writes On](https://img.shields.io/mastodon/follow/108210086817505115?domain=https%3A%2F%2Fcybersecurity.theater)](https://cybersecurity.theater/@tweedge)
 
-A small (28MB compressed!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/) and [httpx](https://github.com/encode/httpx/)+socksio, configured via environment variables, which checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. This was intended to be a one-stop-shop to increase assurance that my Tor site is up, connecting Tor uptime to monitors that have the ability to remind me via emails/texts/etc.
+A small (28MB compressed!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/), [httpx](https://www.python-httpx.org/), and socksio, which checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. It can be configured with as few as 2 environment variables. This was created to be a simple mechanism to increase assurance that my Tor site is up, connecting my Tor site's uptime to monitors that have the ability to remind me via emails/texts/etc.
 
 *Tor is bundled in this Docker image and controlled via [stem](https://stem.torproject.org/)!* It's completely hands-free and works natively in plain old Docker. Whenever the URL can't be accessed over Tor, instead of failing immediately it'll also request a new identity via sending `NEWNYM` to the Tor control port, which can help move the monitor to a better-functioning circuit.
 
@@ -42,6 +42,6 @@ And if you're a real nerd, you can also tweak these probably-OK-to-leave-at-defa
 
 ### Automatic Updates
 
-As privacy software (Tor) may receive security-sensitive updates more than other software, this package is automatically rebuilt weekly, ensuring dependencies are kept up to date. A short test is performed to ensure the new version is able to access my site over Tor, and if the test passes with no errors, the package is automatically published.
+As Tor users may be more sensitive to minor security or privacy updates than the norm, this package is automatically rebuilt weekly, ensuring all dependencies are kept up to date. A short test is performed to ensure the new version is able to access my site over Tor, and if the test passes with no errors, the new image is automatically published to `tweedge/tor-uptime-monitor:latest`.
 
-While my Tor site is not anonymous, this may be important to you depending on what Tor sites you run or are monitoring.
+You can ensure that your copy of this uptime monitor is kept up to date automatically (with all your environment variables/settings intact!) by using [watchtower](https://hub.docker.com/r/containrrr/watchtower).
