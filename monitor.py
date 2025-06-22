@@ -8,6 +8,10 @@ from stem import Signal
 from stem.control import Controller
 
 
+# ignore this if not running CI tests
+test_ci_ctr = 0
+
+
 def getenv_or_default(environment_variable, value_if_missing):
     if environment_variable in environ:
         present_value = getenv(environment_variable)
@@ -18,10 +22,11 @@ def getenv_or_default(environment_variable, value_if_missing):
         return value_if_missing
 
 
-# required variables
+# check required variables
 monitor_tor_url = getenv_or_default("MONITOR_TOR_URL", False)
 uptime_report_url = getenv_or_default("UPTIME_REPORT_URL", False)
 
+# we're missing something :(
 if not (monitor_tor_url and uptime_report_url):
     print(f"SYSTEM: Missing required environment variables - see README.md")
     exit(1)
@@ -35,6 +40,16 @@ restart_after_x_failures = getenv_or_default("RESTART_AFTER_X_FAILURES", 10)
 uptime_report_response_code_under = getenv_or_default(
     "UPTIME_REPORT_RESPONSE_CODE_UNDER", 300
 )
+
+if getenv_or_default("TEST_CI", False):
+    # we are doing a short test in CI!
+    test_ci = 1
+
+    # we'll test my own websites
+    monitor_tor_url = (
+        "http://tweedge32j4ib2hrj57l676twj2rwedkkkbr57xcz5z73vpkolws6vid.onion/"
+    )
+    uptime_report_url = "https://chris.partridge.tech/"
 
 # osminogin/docker-tor-simple variables (don't change these)
 SOCKS_PORT = 9050
@@ -123,6 +138,17 @@ while repeated_exceptions < restart_after_x_failures:
             controller.signal(Signal.NEWNYM)
 
     sleep(monitor_sleep)
+
+    # if we're testing, run a couple times before exiting
+    if test_ci > 0:  # 0 if not testing, 1 if testing
+        test_ci += 1  # add 1 for every time 1 test completes
+        if test_ci > 4:  # stop after 3 tests
+            if repeated_exceptions == 0:  # no issues?
+                print("SHORT TEST: Completed with no failures!")
+                exit(0)
+            else:  # possibly an issue!
+                print("SHORT TEST: FAILED! Check preceding logs.")
+                exit(1)
 
 print("SYSTEM: Restarting because we've failed too many times in a row")
 exit(1)

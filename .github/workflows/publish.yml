@@ -9,21 +9,30 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Set up QEMU
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-      -
-        name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      -
-        name: Login to Docker Hub
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
-        uses: docker/build-push-action@v5
+
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          tags: tweedge/tor-uptime-monitor:test
+
+      - name: Test
+        run: |
+          docker run --rm ${{ env.TEST_TAG }}
+
+      - name: Build and push if test completed
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: tweedge/tor-uptime-monitor:latest
