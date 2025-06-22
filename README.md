@@ -5,7 +5,7 @@
 [![Written By](https://img.shields.io/badge/written%20by-some%20nerd-red.svg)](https://chris.partridge.tech)
 [![Author Also Writes On](https://img.shields.io/mastodon/follow/108210086817505115?domain=https%3A%2F%2Fcybersecurity.theater)](https://cybersecurity.theater/@tweedge)
 
-A small (30MB!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/) and [httpx](https://github.com/encode/httpx/)+socksio, configured via environment variables, which checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. This was intended to be a one-stop-shop to increase assurance that my Tor site is up, connecting Tor uptime to monitors that have the ability to remind me via emails/texts/etc.
+A small (28MB compressed!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/) and [httpx](https://github.com/encode/httpx/)+socksio, configured via environment variables, which checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. This was intended to be a one-stop-shop to increase assurance that my Tor site is up, connecting Tor uptime to monitors that have the ability to remind me via emails/texts/etc.
 
 *Tor is bundled in this Docker image and controlled via [stem](https://stem.torproject.org/)!* It's completely hands-free and works natively in plain old Docker. Whenever the URL can't be accessed over Tor, instead of failing immediately it'll also request a new identity via sending `NEWNYM` to the Tor control port, which can help move the monitor to a better-functioning circuit.
 
@@ -38,3 +38,9 @@ And if you're a real nerd, you can also tweak these probably-OK-to-leave-at-defa
 * `PRINT_TOR_MESSAGES` configures what messages you want to see from Tor. Currently this has one option: `bootstrap_only` (which is the default) will only print bootstrapping messages so you can see if Tor comes up. Setting this to anything else will print all messages from Tor.
 * `RESTART_AFTER_X_FAILURES` configures how many consecutive failures to tolerate before exiting this script, which if you've set the Docker restart policy to "always," prompts creation of a new container (default: 5)
 * `UPTIME_REPORT_RESPONSE_CODE_UNDER` configures when to show a warning in the logs if a the uptime reporting URL gave an unexpectedly high response code (default: 300 - i.e. any sub-300 response code is OK and won't show a warning)
+
+### Automatic Updates
+
+As privacy software (Tor) may receive security-sensitive updates more than other software, this package is automatically rebuilt weekly, ensuring dependencies are kept up to date. A short test is performed to ensure the new version is able to access my site over Tor, and if the test passes with no errors, the package is automatically published.
+
+While my Tor site is not anonymous, this may be important to you depending on what Tor sites you run or are monitoring.

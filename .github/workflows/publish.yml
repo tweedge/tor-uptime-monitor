@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'main'
+  schedule:
+    - cron: '37 12 * * 6'
 
 jobs:
   docker:
@@ -29,7 +31,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run -e TEST_CI='ON' --rm tweedge/tor-uptime-monitor:test
+          bash short_test_with_retry.sh
 
       - name: Build and push if test completed
         uses: docker/build-push-action@v6
