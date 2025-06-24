@@ -9,7 +9,7 @@ from stem.control import Controller
 
 
 # ignore this if not running CI tests
-test_ci_ctr = 0
+test_ci = 0
 
 
 def getenv_or_default(environment_variable, value_if_missing):
