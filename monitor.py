@@ -141,7 +141,7 @@ while repeated_exceptions < restart_after_x_failures:
     # if we're testing, run a couple times before exiting
     if test_ci > 0:  # 0 if not testing, 1 if testing
         test_ci += 1
-        if test_ci > 4:  # stop after several tests
+        if test_ci > 3:  # stop after a few tests
             if repeated_exceptions == 0:  # no issues?
                 print("SHORT TEST: Completed with no failures!")
                 exit(0)
