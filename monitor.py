@@ -128,6 +128,7 @@ while repeated_exceptions < restart_after_x_failures:
     if response:
         report_success(uptime_report_url, uptime_report_response_code_under)
         repeated_exceptions = 0
+        sleep(monitor_sleep)
     else:
         print(
             f"SYSTEM: Sending NEWNYM to Tor control port, trying to get a new better-functioning circuit"
@@ -137,6 +138,21 @@ while repeated_exceptions < restart_after_x_failures:
         with Controller.from_port(port=CONTROL_PORT) as controller:
             controller.authenticate()
             controller.signal(Signal.NEWNYM)
+
+            sleep(monitor_sleep)
+            
+            # print current circuit information
+            try:
+                circuits = controller.get_circuits()
+                if circuits:
+                    print(f"SYSTEM: {len(circuits)} circuit(s) available")
+                    for circuit in circuits:
+                        path_str = ' -> '.join([node.nickname for node in circuit.path]) if circuit.path else "building"
+                        print(f"  Circuit {circuit.id}: {path_str} (status: {circuit.status})")
+                else:
+                    print("SYSTEM: No circuits currently available")
+            except Exception as e:
+                print(f"SYSTEM: Failed to retrieve circuit info: {str(e)}")
 
     # if we're testing, run a couple times before exiting
     if test_ci > 0:  # 0 if not testing, 1 if testing
@@ -148,8 +164,6 @@ while repeated_exceptions < restart_after_x_failures:
             else:  # possibly an issue!
                 print("SHORT TEST: FAILED! Check preceding logs.")
                 exit(1)
-
-    sleep(monitor_sleep)
 
 print("SYSTEM: Restarting because we've failed too many times in a row")
 exit(1)
