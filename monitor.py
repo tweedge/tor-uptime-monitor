@@ -57,27 +57,19 @@ CONTROL_PORT = 9051
 def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
     time_start = time()
 
-    # check if Tor control port is responsive before attempting connection
-    try:
-        with Controller.from_port(port=CONTROL_PORT) as controller:
-            controller.authenticate()
-            bootstrap_status = controller.get_info("status/bootstrap-phase")
-            print(f"TOR: Bootstrap status: {bootstrap_status}")
-    except Exception as e:
-        print(f"FAIL: Cannot connect to Tor control port: {str(e)}")
-        return False
-
     # check circuit status
     try:
         with Controller.from_port(port=CONTROL_PORT) as controller:
             controller.authenticate()
             circuits = controller.get_circuits()
             streams = controller.get_streams()
-            print(f"DEBUG: {len(circuits)} circuits, {len(streams)} streams")
-            for circuit in circuits[:3]:  # show first 3 circuits
-                print(f"DEBUG: Circuit {circuit.id} status: {circuit.status}")
-    except Exception as debug_e:
-        print(f"WARN: Could not get circuit info: {str(debug_e)}")
+
+            if repeated_exceptions > 0:  # print debug info if we failed the last time(s)
+                print(f"DEBUG: {len(circuits)} circuits, {len(streams)} streams")
+                for circuit in circuits[:3]:  # show first 3 circuits
+                    print(f"DEBUG: Example circuit {circuit.id} status: {circuit.status}")
+    except Exception as e:
+        print(f"WARN: Could not get circuit info from Tor: {str(e)}")
 
     # check SOCKS port responsiveness before making the request
     try:
@@ -85,12 +77,13 @@ def tor_get(monitor_tor_url, monitor_tor_contents, monitor_tor_timeout):
         sock.settimeout(5)
         result = sock.connect_ex(("127.0.0.1", SOCKS_PORT))
         sock.close()
-        if result == 0:
-            print("DEBUG: SOCKS port 9050 is reachable")
-        else:
-            print("DEBUG: SOCKS port 9050 is not reachable")
-    except Exception as sock_e:
-        print(f"WARN: Error checking SOCKS port: {str(sock_e)}")
+        if repeated_exceptions > 0:  # print debug info if we failed the last time(s)
+            if result == 0:
+                print("DEBUG: SOCKS port 9050 is reachable")
+            else:
+                print("DEBUG: SOCKS port 9050 is not reachable")
+    except Exception as e:
+        print(f"WARN: Error checking SOCKS port: {str(e)}")
 
     # clearly identify ourselves
     headers = {"User-Agent": "httpx from tweedge/tor-uptime-monitor"}
@@ -180,15 +173,18 @@ while repeated_exceptions < restart_after_x_failures:
         report_success(uptime_report_url, uptime_report_response_code_under)
     else:
         repeated_exceptions += 1
-        with Controller.from_port(port=CONTROL_PORT) as controller:
-            controller.authenticate()
-            circuits = controller.get_circuits()
+        try:
+            with Controller.from_port(port=CONTROL_PORT) as controller:
+                controller.authenticate()
+                circuits = controller.get_circuits()
 
-            # ensure we have at least one healthy circuit
-            healthy_circuits = [c for c in circuits if c.status == "BUILT"]
-            if len(healthy_circuits) == 0:
-                print("MONITOR: No healthy circuits found, sending NEWNYM signal to Tor")
-                controller.signal(Signal.NEWNYM)
+                # ensure we have at least one healthy circuit
+                healthy_circuits = [c for c in circuits if c.status == "BUILT"]
+                if len(healthy_circuits) == 0:
+                    print("MONITOR: No healthy circuits found, sending NEWNYM signal to Tor")
+                    controller.signal(Signal.NEWNYM)
+        except Exception as e:
+            print(f"WARN: Could not communicate with Tor: {str(e)}")
 
     # if we're testing, run a couple times before exiting
     if test_ci > 0:  # 0 if not testing, 1 if testing
