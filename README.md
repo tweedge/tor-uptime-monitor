@@ -1,12 +1,12 @@
 # tor-uptime-monitor
 
-![Build Status](https://github.com/tweedge/tor-uptime-monitor/actions/workflows/publish.yml/badge.svg)
-[![DockerHub Link](https://img.shields.io/docker/pulls/tweedge/tor-uptime-monitor)](https://hub.docker.com/repository/docker/tweedge/tor-uptime-monitor)
+[![Build Status](https://github.com/tweedge/tor-uptime-monitor/actions/workflows/publish.yml/badge.svg)](https://github.com/tweedge/tor-uptime-monitor/actions/workflows/publish.yml)
+[![DockerHub Link](https://img.shields.io/docker/pulls/tweedge/tor-uptime-monitor)](https://hub.docker.com/r/tweedge/tor-uptime-monitor)
 [![License](https://img.shields.io/github/license/tweedge/tor-uptime-monitor)](https://github.com/tweedge/tor-uptime-monitor)
 [![Written By](https://img.shields.io/badge/written%20by-some%20nerd-red.svg)](https://chris.partridge.tech)
 [![Author Also Writes On](https://img.shields.io/mastodon/follow/108210086817505115?domain=https%3A%2F%2Fcybersecurity.theater)](https://cybersecurity.theater/@tweedge)
 
-A small (28MB compressed!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/), [httpx](https://www.python-httpx.org/), and socksio, which checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. It can be configured with as few as 2 environment variables. This was created to be a simple mechanism to increase assurance that my Tor site is up, connecting my Tor site's uptime to monitors that have the ability to remind me via emails/texts/etc.
+A small (28MB compressed!) Docker image based on [osminogin/tor-simple](https://hub.docker.com/r/osminogin/tor-simple/), [httpx](https://www.python-httpx.org/), and socksio, which periodically checks to see if a Tor site is online and pings a (clearnet) uptime monitor if so. It can be configured with as few as 2 environment variables. This was created to be a simple mechanism to increase assurance that my Tor site is up, connecting my Tor site's uptime to monitors that have the ability to remind me via emails/texts/etc.
 
 *Tor is bundled in this Docker image and controlled via [stem](https://stem.torproject.org/)!* It's completely hands-free and works natively in plain old Docker. Whenever the URL can't be accessed over Tor, instead of failing immediately it'll also request a new identity via sending `NEWNYM` to the Tor control port, which can help move the monitor to a better-functioning circuit.
 
@@ -42,6 +42,6 @@ And if you're a real nerd, you can also tweak these probably-OK-to-leave-at-defa
 
 ### Automatic Updates
 
-As Tor users may be more sensitive to minor security or privacy updates than the norm, this package is automatically rebuilt weekly, ensuring all dependencies are kept up to date. A short test is performed to ensure the new version is able to access my site over Tor, and if the test passes with no errors, the new image is automatically published to `tweedge/tor-uptime-monitor:latest`.
+As Tor users may be more sensitive to minor security or privacy updates than the norm, this package is automatically rebuilt monthly, ensuring all dependencies are kept up to date. A short test is performed to ensure the new version is able to access my site over Tor, and if the test passes with no errors, the new image is automatically published to `tweedge/tor-uptime-monitor:latest`.
 
 You can ensure that your copy of this uptime monitor is kept up to date automatically (with all your environment variables/settings intact!) by using [watchtower](https://hub.docker.com/r/containrrr/watchtower).

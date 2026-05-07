@@ -5,7 +5,7 @@ on:
     branches:
       - 'main'
   schedule:
-    - cron: '37 12 * * 6'
+    - cron: '37 12 9 * *' # Every month on the 9th
 
 jobs:
   docker:
